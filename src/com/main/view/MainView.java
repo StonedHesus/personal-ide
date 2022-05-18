@@ -49,12 +49,29 @@ public class MainView extends JFrame implements Configuration {
         // using the default mac one.
         if(operatingSystem.startsWith("Mac")){
 
-
-        } else{
-
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
 
+        final JMenuBar menuBar = new JMenuBar();
 
+        JMenu menuFile = new JMenu("File");
+        menuFile.setMnemonic('f');
+
+        JMenuItem item = new JMenuItem("New");
+        item.setMnemonic('n');
+        item.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_N, InputEvent.META_DOWN_MASK
+        ));
+        ActionListener listener = new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent event){
+            }
+        };
+        item.addActionListener(listener);
+        menuFile.add(item);
+
+        menuBar.add(menuFile);
     }
     private void initialise(){
         /**
