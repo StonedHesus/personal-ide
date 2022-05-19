@@ -13,6 +13,8 @@ import javax.swing.event.*;
 
 import java.lang.*;
 
+import javax.swing.tree.*;
+
 public class MainView extends JFrame implements Configuration {
     /**
      *
@@ -22,18 +24,79 @@ public class MainView extends JFrame implements Configuration {
      */
 
     // Attributes of the class.
+    protected JTextArea mainView_editor;
+
+    protected JTree mainView_hierarchicalTree;
 
     // Constructors of the class.
     public MainView(){
 
         // Initialise the window.
         this.initialise();
+
+        // Add the hierarchical data of the selected project/folder to the IDE.
+        this.createHierarchicalTree();
+
+        // Add the text editor portion of the IDE.
+        this.createTextEditorArea();
+
         // Add the menu bar to the window in accordance with the operating system which the user is using.
         this.setJMenuBar(this.createMenuBar());
 
     }
 
     // Methods of the class.
+    private void open(){
+        /**
+         * Determine whether the object which the user is trying to open is a file or a directory and call the
+         * corresponding method for whichever the case might be.
+         *
+         * @since 0.0.1
+         * @version 0.0.1
+         * @author Andrei-Paul Ionescu.
+         */
+    }
+    private void openDirectory(){
+
+    }
+    private void openFile(){
+
+    }
+    private void createTextEditorArea(){
+        /**
+         *
+         * @since 0.0.1
+         * @version 0.0.1
+         * @author Andrei-Paul Ionescu.
+         */
+
+        this.mainView_editor = new JTextArea();
+        JScrollPane slider = new JScrollPane(this.mainView_editor);
+        this.getContentPane().add(slider, BorderLayout.CENTER);
+    }
+
+    private void createHierarchicalTree(){
+        /**
+         *
+         * @since 0.0.1
+         * @version 0.0.1
+         * @author Andrei-Paul Ionescu.
+         */
+
+        //create the root node
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        //create the child nodes
+        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
+        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
+        //add the child nodes to the root node
+        root.add(vegetableNode);
+        root.add(fruitNode);
+
+        //create the tree by passing in the root node
+        this.mainView_hierarchicalTree = new JTree(root);
+        JScrollPane slider = new JScrollPane(this.mainView_hierarchicalTree);
+        this.getContentPane().add(slider, BorderLayout.WEST);
+    }
     private JMenuBar createMenuBar(){
         /**
          *
