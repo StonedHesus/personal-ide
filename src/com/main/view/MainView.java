@@ -53,9 +53,12 @@ public class MainView extends JFrame implements Configuration {
 
         final JMenuBar menuBar = new JMenuBar();
 
+        // Create a new dropdown menu for the options which have to do with the files which are manipulated by the
+        // IDE.
         JMenu menuFile = new JMenu("File");
         menuFile.setMnemonic('f');
 
+        // Add a new option which for now will only create a new file of a specific extension.
         JMenuItem item = new JMenuItem("New");
         item.setMnemonic('n');
         item.setAccelerator(KeyStroke.getKeyStroke(
@@ -70,11 +73,61 @@ public class MainView extends JFrame implements Configuration {
         item.addActionListener(listener);
         menuFile.add(item);
 
+        // Add a new option which allows the user to open a specific file by specifying a path towards where that file
+        // is located.
+        item = new JMenuItem("Open...");
+        item.setMnemonic('o');
+        item.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O, InputEvent.META_DOWN_MASK
+        ));
+        listener = new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent event){
+
+            }
+        };
+        item.addActionListener(listener);
+        menuFile.add(item);
+
+        // Here we add the save file option which saves a file utilising its current extension.
+        item = new JMenuItem("Save");
+        item.setMnemonic('s');
+        item.setAccelerator(KeyStroke.getKeyStroke(
+           KeyEvent.VK_S, InputEvent.META_DOWN_MASK
+        ));
+        listener = new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent event){
+
+            }
+        };
+        item.addActionListener(listener);
+        menuFile.add(item);
+
+        // Here we collate to the File options menu the ability to save a file with a specific extension.
+        item = new JMenuItem("Save as...");
+        item.setMnemonic('a');
+        item.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_S, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK
+        ));
+        listener = new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent event){
+
+            }
+        };
+        item.addActionListener(listener);
+        menuFile.add(item);
+
+        // Add the file to the menubar.
         menuBar.add(menuFile);
 
         return menuBar;
     }
-    private void initialise(){
+    private void initialise() {
         /**
          *
          * @since 0.0.1
