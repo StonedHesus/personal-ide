@@ -29,13 +29,12 @@ public class MainView extends JFrame implements Configuration {
         // Initialise the window.
         this.initialise();
         // Add the menu bar to the window in accordance with the operating system which the user is using.
-        this.createMenuBar();
-
+        this.setJMenuBar(this.createMenuBar());
 
     }
 
     // Methods of the class.
-    private void createMenuBar(){
+    private JMenuBar createMenuBar(){
         /**
          *
          * @since 0.0.1
@@ -72,6 +71,8 @@ public class MainView extends JFrame implements Configuration {
         menuFile.add(item);
 
         menuBar.add(menuFile);
+
+        return menuBar;
     }
     private void initialise(){
         /**
