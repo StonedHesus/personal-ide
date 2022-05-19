@@ -122,8 +122,43 @@ public class MainView extends JFrame implements Configuration {
         item.addActionListener(listener);
         menuFile.add(item);
 
-        // Add the file to the menubar.
+        // Add the File dropdown menu to the menubar.
         menuBar.add(menuFile);
+
+        // Create a new dropdown menu for Edit functionalities of the IDE.
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.setMnemonic('e');
+
+        // Allow the user to undo something which it has typed.
+        item = new JMenuItem("Undo Typing");
+        item.setMnemonic('u');
+        item.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_Z, InputEvent.META_DOWN_MASK
+        ));
+        listener = new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent event){}
+        };
+        item.addActionListener(listener);
+        editMenu.add(item);
+
+        // Give a user the option to redo the previous action undone.
+        item = new JMenuItem("Redo");
+        item.setMnemonic('r');
+        item.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_Z, InputEvent.META_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK
+        ));
+        listener = new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent event){}
+        };
+        item.addActionListener(listener);
+        editMenu.add(item);
+
+        // Add the Edit dropdown menu to the menubar.
+        menuBar.add(editMenu);
 
         return menuBar;
     }
