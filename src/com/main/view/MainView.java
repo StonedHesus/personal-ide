@@ -28,6 +28,10 @@ public class MainView extends JFrame implements Configuration {
 
     protected JTree mainView_hierarchicalTree;
 
+    protected JFileChooser mainView_chooser;
+
+    protected boolean mainView_textChanged = false;
+
     // Constructors of the class.
     public MainView(){
 
@@ -43,9 +47,23 @@ public class MainView extends JFrame implements Configuration {
         // Add the menu bar to the window in accordance with the operating system which the user is using.
         this.setJMenuBar(this.createMenuBar());
 
+        // Instantiate the JFileChooser object.
+        this.mainView_chooser = new JFileChooser();
+
+        // Update the editor in accordance to any events which were triggered by the user.
+        this.update();
     }
 
     // Methods of the class.
+    private void update(){
+        /**
+         * @since 0.0.1
+         * @version 0.0.1
+         * @author Andrei-Paul Ionescu.
+         */
+    }
+
+
     private void open(){
         /**
          * Determine whether the object which the user is trying to open is a file or a directory and call the
@@ -55,13 +73,48 @@ public class MainView extends JFrame implements Configuration {
          * @version 0.0.1
          * @author Andrei-Paul Ionescu.
          */
+
+        if(this.mainView_chooser.showOpenDialog(MainView.this) != JFileChooser.APPROVE_OPTION) return;
+
+        File flot = this.mainView_chooser.getSelectedFile();
+        if(flot == null || !flot.isFile())
+            return ;
+
+        try{
+
+            FileReader in = new FileReader(flot);
+
+            in.close();
+            setTitle(APP_NAME + " - " + flot.getName());
+        } catch (IOException error) {
+            error.printStackTrace();
+        }
+
+        mainView_editor.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {mainView_textChanged = true;}
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {mainView_textChanged = true;}
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {mainView_textChanged = true;}
+        });
+
     }
+
+
     private void openDirectory(){
 
     }
+
+
     private void openFile(){
 
     }
+
+
     private void createTextEditorArea(){
         /**
          *
@@ -74,6 +127,7 @@ public class MainView extends JFrame implements Configuration {
         JScrollPane slider = new JScrollPane(this.mainView_editor);
         this.getContentPane().add(slider, BorderLayout.CENTER);
     }
+
 
     private void createHierarchicalTree(){
         /**
@@ -97,6 +151,8 @@ public class MainView extends JFrame implements Configuration {
         JScrollPane slider = new JScrollPane(this.mainView_hierarchicalTree);
         this.getContentPane().add(slider, BorderLayout.WEST);
     }
+
+
     private JMenuBar createMenuBar(){
         /**
          *
@@ -148,6 +204,8 @@ public class MainView extends JFrame implements Configuration {
             @Override
             public void actionPerformed(ActionEvent event){
 
+                // If the option to open is triggered then respond to the event via the aid of the open method.
+                open();
             }
         };
         item.addActionListener(listener);
@@ -225,6 +283,8 @@ public class MainView extends JFrame implements Configuration {
 
         return menuBar;
     }
+
+
     private void initialise() {
         /**
          *
