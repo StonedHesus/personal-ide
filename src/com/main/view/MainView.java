@@ -24,13 +24,15 @@ public class MainView extends JFrame implements Configuration {
      */
 
     // Attributes of the class.
-    protected JTextArea mainView_editor;
+    protected JTextArea mainView_editor; // The editor's text area.
 
-    protected JTree mainView_hierarchicalTree;
+    protected JTree mainView_hierarchicalTree; // The hierarchical tree of the current project.
 
-    protected JFileChooser mainView_chooser;
+    protected JFileChooser mainView_chooser; // The file chooser object which enables us to navigate through the system.
 
-    protected boolean mainView_textChanged = false;
+    protected boolean mainView_textChanged = false; // A boolean which tells us whether the current file needs to be changed or not.
+
+    protected File mainView_currentFile; // A reference to the current file which helps us display it.
 
     // Constructors of the class.
     public MainView(){
@@ -80,16 +82,18 @@ public class MainView extends JFrame implements Configuration {
         if(flot == null || !flot.isFile())
             return ;
 
+        this.mainView_currentFile = flot;
         try{
 
             FileReader in = new FileReader(flot);
-
+            this.mainView_editor.read(in, null);
             in.close();
             setTitle(APP_NAME + " - " + flot.getName());
         } catch (IOException error) {
             error.printStackTrace();
         }
 
+        this.mainView_textChanged = false;
         mainView_editor.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
