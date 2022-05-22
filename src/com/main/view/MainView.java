@@ -3,6 +3,8 @@ package com.main.view;
 import com.main.configuration.Configuration;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import java.awt.*;
@@ -12,7 +14,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.lang.*;
+import java.util.List;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
 import javax.swing.tree.*;
 
 public class MainView extends JFrame implements Configuration {
@@ -26,22 +31,19 @@ public class MainView extends JFrame implements Configuration {
     // Attributes of the class.
     protected JTextArea mainView_editor; // The editor's text area.
 
-    protected JTree mainView_hierarchicalTree; // The hierarchical tree of the current project.
+    protected JTree mainView_hierarchicalTree = null; // The hierarchical tree of the current project.
 
     protected JFileChooser mainView_chooser; // The file chooser object which enables us to navigate through the system.
 
     protected boolean mainView_textChanged = false; // A boolean which tells us whether the current file needs to be changed or not.
 
-    protected File mainView_currentFile; // A reference to the current file which helps us display it.
+    protected File mainView_currentFile = null; // A reference to the current file which helps us display it.
 
     // Constructors of the class.
     public MainView(){
 
         // Initialise the window.
         this.initialise();
-
-        // Add the hierarchical data of the selected project/folder to the IDE.
-        this.createHierarchicalTree();
 
         // Add the text editor portion of the IDE.
         this.createTextEditorArea();
@@ -51,18 +53,40 @@ public class MainView extends JFrame implements Configuration {
 
         // Instantiate the JFileChooser object.
         this.mainView_chooser = new JFileChooser();
+        this.mainView_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         // Update the editor in accordance to any events which were triggered by the user.
         this.update();
     }
 
     // Methods of the class.
+    private void highLightCurrentLine() throws BadLocationException {
+        /**
+         * @since 0.0.1
+         * @version 0.0.1
+         * @author Andrei-Paul Ionescu.
+         */
+
+        if(this.mainView_currentFile == null) return;
+
+        final int position = this.mainView_editor.getText().indexOf(0);
+        this.mainView_editor.getHighlighter().addHighlight(position,
+                position, new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN));
+
+    }
+
     private void update(){
         /**
          * @since 0.0.1
          * @version 0.0.1
          * @author Andrei-Paul Ionescu.
          */
+
+        try {
+            this.highLightCurrentLine();
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -79,8 +103,24 @@ public class MainView extends JFrame implements Configuration {
         if(this.mainView_chooser.showOpenDialog(MainView.this) != JFileChooser.APPROVE_OPTION) return;
 
         File flot = this.mainView_chooser.getSelectedFile();
-        if(flot == null || !flot.isFile())
+        if(flot == null)
             return ;
+
+        if(Files.isDirectory(flot.getParentFile().toPath())) openDirectory(flot);
+        else openFile(flot);
+
+    }
+
+
+    private void openDirectory(File flot){
+
+        // Add the hierarchical data of the selected project/folder to the IDE.
+
+        this.createHierarchicalTree(flot);
+    }
+
+
+    private void openFile(File flot){
 
         this.mainView_currentFile = flot;
         try{
@@ -105,17 +145,6 @@ public class MainView extends JFrame implements Configuration {
             @Override
             public void changedUpdate(DocumentEvent e) {mainView_textChanged = true;}
         });
-
-    }
-
-
-    private void openDirectory(){
-
-    }
-
-
-    private void openFile(){
-
     }
 
 
@@ -133,7 +162,7 @@ public class MainView extends JFrame implements Configuration {
     }
 
 
-    private void createHierarchicalTree(){
+    private void createHierarchicalTree(File flot){
         /**
          *
          * @since 0.0.1
@@ -141,16 +170,25 @@ public class MainView extends JFrame implements Configuration {
          * @author Andrei-Paul Ionescu.
          */
 
-        //create the root node
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-        //create the child nodes
-        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
-        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
-        //add the child nodes to the root node
-        root.add(vegetableNode);
-        root.add(fruitNode);
+        if(this.mainView_hierarchicalTree != null)
+            this.mainView_hierarchicalTree = null;
 
-        //create the tree by passing in the root node
+        // Create the root note of the currently selected folder.
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(flot.getName());
+
+        // Create the child nodes of the currently selected folder.
+        List<DefaultMutableTreeNode> nodes = new LinkedList<>();
+
+
+
+        // Add the children to the root.
+        for(DefaultMutableTreeNode node : nodes){
+
+            root.add(node);
+        }
+
+        // Create a new JTree object and connect it with our root then add the scroller and then collate everything
+        // to the current content pane.
         this.mainView_hierarchicalTree = new JTree(root);
         JScrollPane slider = new JScrollPane(this.mainView_hierarchicalTree);
         this.getContentPane().add(slider, BorderLayout.WEST);
