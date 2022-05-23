@@ -179,6 +179,21 @@ public class MainView extends JFrame implements Configuration {
         // Create the child nodes of the currently selected folder.
         List<DefaultMutableTreeNode> nodes = new LinkedList<>();
 
+        // Create new nodes for all the folders which are found within the open directory.
+        List<DefaultMutableTreeNode> otherDirectories = new LinkedList<>();
+
+        for(File entity : flot.listFiles()){
+
+            if(entity.isDirectory()){
+
+                otherDirectories.add(new DefaultMutableTreeNode(entity.getName()));
+            }
+
+            if(entity.isFile()){
+
+                nodes.add(new DefaultMutableTreeNode(entity.getName()));
+            }
+        }
 
 
         // Add the children to the root.
@@ -190,6 +205,18 @@ public class MainView extends JFrame implements Configuration {
         // Create a new JTree object and connect it with our root then add the scroller and then collate everything
         // to the current content pane.
         this.mainView_hierarchicalTree = new JTree(root);
+
+        // Add the other roots/directories.
+        for(DefaultMutableTreeNode directory : otherDirectories){
+
+            // Get the model of the current JTree.
+            DefaultTreeModel currentModel = (DefaultTreeModel) mainView_hierarchicalTree.getModel();
+
+
+            root.add(directory);
+
+            currentModel.reload();
+        }
         JScrollPane slider = new JScrollPane(this.mainView_hierarchicalTree);
         this.getContentPane().add(slider, BorderLayout.WEST);
     }
