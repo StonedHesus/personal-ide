@@ -173,52 +173,68 @@ public class MainView extends JFrame implements Configuration {
         if(this.mainView_hierarchicalTree != null)
             this.mainView_hierarchicalTree = null;
 
-        // Create the root note of the currently selected folder.
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(flot.getName());
-
-        // Create the child nodes of the currently selected folder.
-        List<DefaultMutableTreeNode> nodes = new LinkedList<>();
-
-        // Create new nodes for all the folders which are found within the open directory.
-        List<DefaultMutableTreeNode> otherDirectories = new LinkedList<>();
-
-        for(File entity : flot.listFiles()){
-
-            if(entity.isDirectory()){
-
-                otherDirectories.add(new DefaultMutableTreeNode(entity.getName()));
-            }
-
-            if(entity.isFile()){
-
-                nodes.add(new DefaultMutableTreeNode(entity.getName()));
-            }
-        }
-
-
-        // Add the children to the root.
-        for(DefaultMutableTreeNode node : nodes){
-
-            root.add(node);
-        }
-
         // Create a new JTree object and connect it with our root then add the scroller and then collate everything
         // to the current content pane.
-        this.mainView_hierarchicalTree = new JTree(root);
+        this.mainView_hierarchicalTree = new JTree(addNodes(null, flot));
 
-        // Add the other roots/directories.
-        for(DefaultMutableTreeNode directory : otherDirectories){
+        // Add an event listener so as to respond to user clicks.
+        this.mainView_hierarchicalTree.addTreeSelectionListener(new TreeSelectionListener() {
 
-            // Get the model of the current JTree.
-            DefaultTreeModel currentModel = (DefaultTreeModel) mainView_hierarchicalTree.getModel();
+            @Override
+            public void valueChanged(TreeSelectionEvent selected) {
 
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) selected.getPath().getLastPathComponent();
 
-            root.add(directory);
+                // Handle the event depending on whether the node points to a file or a directory.
+            }
+        });
 
-            currentModel.reload();
-        }
         JScrollPane slider = new JScrollPane(this.mainView_hierarchicalTree);
         this.getContentPane().add(slider, BorderLayout.WEST);
+    }
+
+
+    private DefaultMutableTreeNode addNodes(DefaultMutableTreeNode currentRoot, File directory){
+
+        // TODO: Make so that only the name appears in the JTree and not the path.
+
+        String currentPath = directory.getPath();
+        DefaultMutableTreeNode currentDirectory = new DefaultMutableTreeNode(currentPath);
+
+        if(currentRoot != null) // This will only be null for the first call of the method.
+            currentRoot.add(currentDirectory);
+
+        LinkedList<String> paths = new LinkedList<>();
+        String[] temporary = directory.list();
+
+        assert temporary != null;
+        Collections.addAll(paths, temporary);
+
+        paths.sort(String.CASE_INSENSITIVE_ORDER);
+
+        File flot;
+        LinkedList<String> files = new LinkedList<>();
+
+        // Deal with the directories.
+        for(String path : paths){
+
+            String newPath;
+            if(currentPath.equals("."))
+                newPath = path;
+            else
+                newPath = currentPath + File.separator + path;
+
+            if((flot = new File(newPath)).isDirectory())
+                addNodes(currentDirectory, flot);
+            else
+                files.add(path);
+        }
+
+        // Deal with the files.
+        for(String file : files)
+            currentDirectory.add(new DefaultMutableTreeNode(file));
+
+        return currentDirectory;
     }
 
 
