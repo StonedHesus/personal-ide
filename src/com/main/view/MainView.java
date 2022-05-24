@@ -106,7 +106,7 @@ public class MainView extends JFrame implements Configuration {
         if(flot == null)
             return ;
 
-        if(Files.isDirectory(flot.getParentFile().toPath())) openDirectory(flot);
+        if(flot.isDirectory()) openDirectory(flot);
         else openFile(flot);
 
     }
